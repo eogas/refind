@@ -49,8 +49,8 @@ var refindClearHighlightedMatches = function() {
     }
     
     var hiddenElems = document.getElementsByClassName(REFIND_HIDDEN_STYLE);
-    for (var i = 0; i < hiddenElems.length; i++) {
-        $(hiddenElems[i]).removeClass(REFIND_HIDDEN_STYLE);
+    while (hiddenElems.length > 0) {
+        $(hiddenElems[0]).removeClass(REFIND_HIDDEN_STYLE);
     }
 };
 
