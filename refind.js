@@ -2,9 +2,9 @@
 /* global chrome */
 
 document.addEventListener('DOMContentLoaded', function() {
-    var searchBox = document.getElementById("refind-input");
-    var searchButton = document.getElementById("refind-submit");
-    var clearButton = document.getElementById("refind-clear");
+    var searchBox = document.getElementById('refind-input');
+    var searchButton = document.getElementById('refind-submit');
+    var clearButton = document.getElementById('refind-clear');
     
     chrome.tabs.query({
         active: true,
@@ -17,13 +17,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // We should only ever get one tab back
         var currentTab = tabs[0];
+        
+        // TODO Try to eliminate jquery dependency
+        chrome.tabs.executeScript(currentTab.id, {
+            file: 'jquery-2.1.4.min.js'
+        });
             
         chrome.tabs.executeScript(currentTab.id, {
-            file: "inject.js"
+            file: 'inject.js'
         });
         
         chrome.tabs.insertCSS(currentTab.id, {
-            file: "inject.css"
+            file: 'inject.css'
         });
         
         searchButton.onclick = function(ev) {
@@ -37,8 +42,10 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         clearButton.onclick = function(ef) {
+            searchBox.value = '';
+            
             chrome.tabs.executeScript(currentTab.id, {
-                code: "refindClearHighlightedMatches();"
+                code: 'refindClearHighlightedMatches();'
             });
         };
     });

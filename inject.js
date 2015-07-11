@@ -1,3 +1,4 @@
+/// <reference path="typings/jquery/jquery.d.ts"/>
 
 // globals, yo
 var REFIND_SPANSTYLE = 'refind-123evanisgreat456';
@@ -14,6 +15,13 @@ var refindPerformSearch = function(searchPattern) {
     for (var i = 0; i < pElems.length; i++) {
         refindHighlightMatches(searchPattern, pElems[i]);
     };
+    
+    var matchSpans = document.getElementsByClassName(REFIND_SPANSTYLE);
+    if (matchSpans.length > 0) {
+        $('html, body').animate({
+            scrollTop: $(matchSpans[0]).offset().top
+        }, 300);
+    }
 }
 
 var refindClearHighlightedMatches = function() {
@@ -42,7 +50,7 @@ var refindClearHighlightedMatches = function() {
 
 var refindHighlightMatches = function(pattern, element) {
     var rawText = element.innerHTML;
-    var re = new RegExp(pattern, 'g');
+    var re = new RegExp(pattern, 'ig');
     
     var match;
     var newText = '';
