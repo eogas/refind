@@ -1,6 +1,13 @@
 
-// TODO Before performing a search, remove any currently highlighted results
+// globals, yo
+var REFIND_SPANSTYLE = 'refind-123evanisgreat456';
+var REFIND_SPANSTART = '<span class="' + REFIND_SPANSTYLE + '">';
+var REFIND_SPANEND = '</span>';
+
 var refindPerformSearch = function(searchPattern) {
+    // Before performing a search, remove any currently highlighted results
+    refindClearHighlightedMatches();
+    
     // TODO Handle other types of elements (Headers, spans, etc)
     var pElems = document.getElementsByTagName('p');
     
@@ -8,6 +15,30 @@ var refindPerformSearch = function(searchPattern) {
         refindHighlightMatches(searchPattern, pElems[i]);
     };
 }
+
+var refindClearHighlightedMatches = function() {
+    var matchSpans = document.getElementsByClassName(REFIND_SPANSTYLE);  
+    
+    while (matchSpans.length > 0) {
+        var matchSpan = matchSpans[0];
+        var matchHTML = matchSpan.outerHTML;
+        var matchText = matchSpan.innerHTML;
+        var parentNode = matchSpan.parentNode;
+        var fullText = parentNode.innerHTML;
+        var rawText = "";
+        
+        var matchIndex = fullText.indexOf(matchHTML);
+        rawText += fullText.substr(0, matchIndex);
+        rawText += matchText;
+        
+        var spanEndIndex = matchIndex + matchHTML.length;
+        rawText += fullText.substr(spanEndIndex);
+        
+        // This line removes the match span from the DOM, which also
+        // removes it from the matchSpans result set on the fly
+        parentNode.innerHTML = rawText;
+    }
+};
 
 var refindHighlightMatches = function(pattern, element) {
     var rawText = element.innerHTML;
@@ -23,9 +54,9 @@ var refindHighlightMatches = function(pattern, element) {
         
         // TODO Use custom style for highlighting
         // matched section
-        newText += '<span class="refind-123evanisgreat456">';
+        newText += REFIND_SPANSTART;
         newText += match[0];
-        newText += '</span>';
+        newText += REFIND_SPANEND;
         
         curStartIndex = re.lastIndex;
     }

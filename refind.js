@@ -4,6 +4,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var searchBox = document.getElementById("refind-input");
     var searchButton = document.getElementById("refind-submit");
+    var clearButton = document.getElementById("refind-clear");
     
     chrome.tabs.query({
         active: true,
@@ -26,8 +27,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         searchButton.onclick = function(ev) {
+            if (searchBox.value.trim() === '') {
+                return;
+            }
+            
             chrome.tabs.executeScript(currentTab.id, {
                 code: "refindPerformSearch('" + searchBox.value + "');"
+            });
+        };
+        
+        clearButton.onclick = function(ef) {
+            chrome.tabs.executeScript(currentTab.id, {
+                code: "refindClearHighlightedMatches();"
             });
         };
     });
