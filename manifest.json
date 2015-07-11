@@ -1,5 +1,6 @@
 {
     "name": "refind",
+    "description": "Regex enabled Find",
     "version": "0.1",
     
     "permissions": [
@@ -7,9 +8,7 @@
     ],
     
     "background": {
-        "scripts": [
-            "background.js"
-        ],
+        "scripts": [ "background.js" ],
         "persistent": false
     },
     
