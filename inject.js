@@ -1,6 +1,8 @@
 // hardcode a pattern for now, all words ending in 'ing'
 var searchPattern = '\\w+ing\\W';
 
+// TODO Before performing a search, remove any currently highlighted results
+
 var highlightMatches = function(pattern, element) {
     var rawText = element.innerHTML;
     var re = new RegExp(pattern, 'g');
@@ -15,9 +17,9 @@ var highlightMatches = function(pattern, element) {
         
         // TODO Use custom style for highlighting
         // matched section
-        newText += '<strong>';
+        newText += '<span class="refind-123evanisgreat456">';
         newText += match[0];
-        newText += '</strong>';
+        newText += '</span>';
         
         curStartIndex = re.lastIndex;
     }

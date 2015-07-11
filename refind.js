@@ -21,6 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.tabs.executeScript(currentTab.id, {
                 file: "inject.js"
             });
+            
+            // TODO only inject the .css once per tab
+            chrome.tabs.insertCSS(currentTab.id, {
+                file: "inject.css"
+            });
         });
     };
 });
