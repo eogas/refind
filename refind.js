@@ -42,8 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // need to escape backslashes for eval
+            var searchPattern = $(searchBox).val().replace(/\\/g, '\\\\');
+            
             chrome.tabs.executeScript(currentTab.id, {
-                code: "refindPerformSearch('" + searchBox.value + "');"
+                code: "refindPerformSearch('" + searchPattern + "');"
             });
         };
         
