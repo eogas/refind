@@ -7,23 +7,32 @@ var REFIND_MATCHED_ELEM_STYLE = 'refind-matched-elem';
 var REFIND_SPANSTART = '<span class="' + REFIND_SPANSTYLE + '">';
 var REFIND_SPANEND = '</span>';
 
+var refindHighlightMatchesForTagName = function(searchPattern, tagname) {
+    var elems = document.getElementsByTagName(tagname);
+    var frozenElems = [];
+    
+    // We add more matching elements in the highlight function, so we save a "frozen"
+    // list here.  TODO Find a better solution for this.
+    for (var i = 0; i < elems.length; i++) {
+        frozenElems.push(elems[i]);
+    };
+    
+    for (var i = 0; i < frozenElems.length; i++) {
+        refindHighlightMatches(searchPattern, frozenElems[i], tagname);
+    };
+};
+
 var refindPerformSearch = function(searchPattern) {
     // Before performing a search, remove any currently highlighted results
-    //refindClearHighlightedMatches();
+    refindClearHighlightedMatches();
     
-    // TODO Handle other types of elements (Headers, spans, etc)
-    var pElems = document.getElementsByTagName('p');
-    var frozenPElems = [];
-    
-    // We add more <p> elements in the highlight function, so we save a "frozen"
-    // list here.  TODO Find a better solution for this.
-    for (var i = 0; i < pElems.length; i++) {
-        frozenPElems.push(pElems[i]);
-    };
-    
-    for (var i = 0; i < frozenPElems.length; i++) {
-        refindHighlightMatches(searchPattern, frozenPElems[i]);
-    };
+    refindHighlightMatchesForTagName(searchPattern, 'p');
+    refindHighlightMatchesForTagName(searchPattern, 'h1');
+    refindHighlightMatchesForTagName(searchPattern, 'h2');
+    refindHighlightMatchesForTagName(searchPattern, 'h3');
+    refindHighlightMatchesForTagName(searchPattern, 'h4');
+    refindHighlightMatchesForTagName(searchPattern, 'h5');
+    refindHighlightMatchesForTagName(searchPattern, 'code');
     
     var matchSpans = document.getElementsByClassName(REFIND_SPANSTYLE);
     if (matchSpans.length > 0) {
@@ -35,7 +44,6 @@ var refindPerformSearch = function(searchPattern) {
 
 var refindClearHighlightedMatches = function() {
     var matchedElems = document.getElementsByClassName(REFIND_MATCHED_ELEM_STYLE);
-    
     while (matchedElems.length > 0) {
         $(matchedElems[0]).remove();
     }
@@ -46,7 +54,7 @@ var refindClearHighlightedMatches = function() {
     }
 };
 
-var refindHighlightMatches = function(pattern, element) {
+var refindHighlightMatches = function(pattern, element, elemType) {
     var rawText = element.textContent;
     var re = new RegExp(pattern, 'ig');
     
@@ -71,12 +79,22 @@ var refindHighlightMatches = function(pattern, element) {
         return;
     }
     
-    // hide the original element
-    $(element).addClass(REFIND_HIDDEN_STYLE);
-    
     // append last unmatched portion of the text
     newText += rawText.substr(curStartIndex);
     
     // add highlighted version of element after the original copy
-    $(element).after('<p class="' + REFIND_MATCHED_ELEM_STYLE + '"> ' + newText + '</p>')
+    //var highlightedElem = $(element).after('<' + elemType + '> ' + newText + '</' + elemType + '>');
+    var highlightedElem = document.createElement(elemType);
+    highlightedElem.innerHTML = newText;
+    
+    $(element).after(highlightedElem);
+    $(highlightedElem).addClass(REFIND_MATCHED_ELEM_STYLE);
+    
+    var classes = element.className.split(/\s+/);
+    classes.forEach(function(cls) {
+        $(highlightedElem).addClass(cls);
+    })
+    
+    // hide the original element
+    $(element).addClass(REFIND_HIDDEN_STYLE);
 };
