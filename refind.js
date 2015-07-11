@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
             file: 'inject.css'
         });
         
+        $(searchBox).keypress(function (e) {
+            if (e.which === 13) {
+                searchButton.click();
+            }
+        });
+        
         searchButton.onclick = function(ev) {
             if (searchBox.value.trim() === '') {
                 return;

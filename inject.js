@@ -1,19 +1,28 @@
 /// <reference path="typings/jquery/jquery.d.ts"/>
 
 // globals, yo
-var REFIND_SPANSTYLE = 'refind-123evanisgreat456';
+var REFIND_SPANSTYLE = 'refind-match-highlight';
+var REFIND_HIDDEN_STYLE = 'refind-temp-hidden';
+var REFIND_MATCHED_ELEM_STYLE = 'refind-matched-elem';
 var REFIND_SPANSTART = '<span class="' + REFIND_SPANSTYLE + '">';
 var REFIND_SPANEND = '</span>';
 
 var refindPerformSearch = function(searchPattern) {
     // Before performing a search, remove any currently highlighted results
-    refindClearHighlightedMatches();
+    //refindClearHighlightedMatches();
     
     // TODO Handle other types of elements (Headers, spans, etc)
     var pElems = document.getElementsByTagName('p');
+    var frozenPElems = [];
     
+    // We add more <p> elements in the highlight function, so we save a "frozen"
+    // list here.  TODO Find a better solution for this.
     for (var i = 0; i < pElems.length; i++) {
-        refindHighlightMatches(searchPattern, pElems[i]);
+        frozenPElems.push(pElems[i]);
+    };
+    
+    for (var i = 0; i < frozenPElems.length; i++) {
+        refindHighlightMatches(searchPattern, frozenPElems[i]);
     };
     
     var matchSpans = document.getElementsByClassName(REFIND_SPANSTYLE);
@@ -25,38 +34,26 @@ var refindPerformSearch = function(searchPattern) {
 }
 
 var refindClearHighlightedMatches = function() {
-    var matchSpans = document.getElementsByClassName(REFIND_SPANSTYLE);  
+    var matchedElems = document.getElementsByClassName(REFIND_MATCHED_ELEM_STYLE);
     
-    while (matchSpans.length > 0) {
-        var matchSpan = matchSpans[0];
-        var matchHTML = matchSpan.outerHTML;
-        var matchText = matchSpan.innerHTML;
-        var parentNode = matchSpan.parentNode;
-        var fullText = parentNode.innerHTML;
-        var rawText = "";
-        
-        var matchIndex = fullText.indexOf(matchHTML);
-        rawText += fullText.substr(0, matchIndex);
-        rawText += matchText;
-        
-        var spanEndIndex = matchIndex + matchHTML.length;
-        rawText += fullText.substr(spanEndIndex);
-        
-        // This line removes the match span from the DOM, which also
-        // removes it from the matchSpans result set on the fly
-        parentNode.innerHTML = rawText;
+    while (matchedElems.length > 0) {
+        $(matchedElems[0]).remove();
+    }
+    
+    var hiddenElems = document.getElementsByClassName(REFIND_HIDDEN_STYLE);
+    for (var i = 0; i < hiddenElems.length; i++) {
+        $(hiddenElems[i]).removeClass(REFIND_HIDDEN_STYLE);
     }
 };
 
 var refindHighlightMatches = function(pattern, element) {
-    var rawText = element.innerHTML;
+    var rawText = element.textContent;
     var re = new RegExp(pattern, 'ig');
     
     var match;
     var newText = '';
     var curStartIndex = 0;
     while ((match = re.exec(rawText)) !== null) {
-        console.log(rawText);
         // unmatched part of raw text
         newText += rawText.substr(curStartIndex, match.index - curStartIndex);
         
@@ -74,7 +71,12 @@ var refindHighlightMatches = function(pattern, element) {
         return;
     }
     
+    // hide the original element
+    $(element).addClass(REFIND_HIDDEN_STYLE);
+    
     // append last unmatched portion of the text
     newText += rawText.substr(curStartIndex);
-    element.innerHTML = newText;
+    
+    // add highlighted version of element after the original copy
+    $(element).after('<p class="' + REFIND_MATCHED_ELEM_STYLE + '"> ' + newText + '</p>')
 };

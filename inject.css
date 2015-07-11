@@ -1,4 +1,11 @@
-/* lazy attempt at a unique class */
-.refind-123evanisgreat456 {
+/* TODO maybe put some sort of guid in these class names */
+.refind-match-highlight {
     background-color: yellowgreen;
 };
+
+.refind-matched-elem {
+}
+
+.refind-temp-hidden {
+    display: none;
+}
