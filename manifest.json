@@ -17,5 +17,11 @@
         "default_popup": "refind.html"
     },
     
+    "icons": {
+        "16": "search_16.png",
+        "48": "search_48.png",
+        "128": "search_128.png"
+    },
+    
     "manifest_version": 2
 }
